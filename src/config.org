@@ -4,7 +4,7 @@
 
 #+BEGIN_SRC emacs-lisp
 (defvar kb-src-dir "~/org/blog/src")
-(defvar kb-pub-dir "~/org/blog/doc")
+(defvar kb-pub-dir "~/org/blog/docs")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -64,7 +64,7 @@
           ("org-notes"
            :base-directory "~/org/blog/src"
            :base-extension "org"
-           :publishing-directory "~/org/blog/doc"
+           :publishing-directory "~/org/blog/docs"
            :recursive t
            :publishing-function org-html-publish-to-html
            :author "AJGreen"
@@ -78,13 +78,13 @@
           ("org-static"
            :base-directory "~/org/blog/css"
            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-           :publishing-directory "~/org/blog/doc"
+           :publishing-directory "~/org/blog/docs"
            :recursive t
            :publishing-function org-publish-attachment)
           ("org-static2"
            :base-directory "~/org/blog/src"
            :base-extension "png\\|jpg\\|gif"
-           :publishing-directory "~/org/blog/doc"
+           :publishing-directory "~/org/blog/docs"
            :recursive t
            :publishing-function org-publish-attachment)
           ("org" :components ("org-notes" "org-static" "org-static2"))
