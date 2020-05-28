@@ -67,8 +67,6 @@
            :publishing-directory "~/org/blog/docs"
            :recursive t
            :publishing-function org-html-publish-to-html
-           :author "AJGreen"
-           :email " alexander.jake.green@gmail.com"
            :language "en"
            :link_home "index.html"
            :headline-levels 4
