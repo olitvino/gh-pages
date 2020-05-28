@@ -1,0 +1,15 @@
+#+TITLE: Nsenter Invalid Argument
+#+TIMESTAMP: 2017-08-14
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+*Problem:* you tried to enter docker namespace but got an error:
+#+BEGIN_QUOTE
+nsenter: reassociate to namespace 'ns/net' failed: Invalid argument
+#+END_QUOTE
+
+This can be caused by docker daemon started with `MountFlags=slave`
+
+*Solution:* Use a double nsenter:
+#+BEGIN_SRC bash
+nsenter -m -t $(cat /var/run/docker.pid) nsenter --net=/var/run/docker/netns/${network_id} ip link
+#+END_SRC

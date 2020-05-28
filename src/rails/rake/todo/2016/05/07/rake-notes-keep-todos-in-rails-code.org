@@ -1,0 +1,19 @@
+#+TITLE: rake notes - keep your TODOs in the code
+#+TIMESTAMP: 2016-05-07
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+=rake notes= will search through your code for comments beginning with =FIXME=, =OPTIMIZE= or =TODO=.
+The search is done in files with extension *.builder*, *.rb*, *.rake*, *.yml*, *.yaml*, *.ruby*, *.css*, *.js* and *.erb* for both default and custom annotations.
+
+#+BEGIN_SRC bash
+$ bin/rake notes
+(in /home/foobar/commandsapp)
+app/controllers/admin/users_controller.rb:
+  * [ 20] [TODO] any other way to do this?
+  * [132] [FIXME] high priority for next deploy
+app/models/school.rb:
+  * [ 13] [OPTIMIZE] refactor this code to make it faster
+  * [ 17] [FIXME]
+#+END_SRC
+
+[[http://guides.rubyonrails.org/command_line.html#notes][>> Continue reading <<]]

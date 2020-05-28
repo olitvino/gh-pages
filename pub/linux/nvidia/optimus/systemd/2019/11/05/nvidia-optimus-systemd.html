@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-05-28 Thu 02:46 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nvidia Optimus: Switch on Boot with Systemd</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://gongzhitaao.org/orgcss/org.css" type="text/css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+<script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class"),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/googlecode.min.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<a href="/about.html">about</a>
+</div>
+<div id="content">
+<h1 class="title">Nvidia Optimus: Switch on Boot with Systemd</h1>
+<p>
+/etc/grub.d/40_custom:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">sh</span>
+<span class="org-keyword">exec</span> tail -n +3 $<span class="org-variable-name">0</span>
+
+menuentry <span class="org-string">'Gentoo GNU/Linux NVIDIA'</span> <span class="org-rainbow-delimiters-depth-1">{</span>
+    load_video
+    <span class="org-builtin">set</span> <span class="org-variable-name">gfxpayload</span>=keep
+    insmod gzio
+    insmod part_gpt
+    insmod fat
+    search --no-floppy --fs-uuid --set=root 1234-ABCD
+    <span class="org-builtin">echo</span>    <span class="org-string">'Loading Linux (NVIDIA) ...'</span>
+    linux   /kernel <span class="org-variable-name">root</span>=/dev/sda1 ro <span class="org-variable-name">init</span>=/usr/lib/systemd/systemd <span class="org-variable-name">rootfstype</span>=ext4 <span class="org-variable-name">acpi_osi</span>=Linux <span class="org-variable-name">intel_pstate</span>=hwp_only noapic systemd.setenv=<span class="org-variable-name">GPUMOD</span>=nvidia nvidia-drm.modeset=1
+    <span class="org-builtin">echo</span>    <span class="org-string">'Loading initial ramdisk ...'</span>
+    initrd  /intel-uc.img /initramfs
+<span class="org-rainbow-delimiters-depth-1">}</span>
+</pre>
+</div>
+
+
+<p>
+/etc/local.d/gpu_switch.start:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
+
+<span class="org-builtin">echo</span> <span class="org-string">"GPUMOD: $GPUMOD"</span>
+
+<span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-1">[</span><span class="org-rainbow-delimiters-depth-2">[</span> <span class="org-string">"$GPUMOD"</span> == <span class="org-string">"nvidia"</span> <span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span> ; <span class="org-keyword">then</span>
+    rm -f /etc/modprobe.d/blacklist-nvidia.conf
+    modprobe -q nvidia
+    modprobe -q nvidia_drm
+    modprobe -q nvidia_modeset
+    <span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-1">[</span><span class="org-rainbow-delimiters-depth-2">[</span> $<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-sh-quoted-exec">eselect</span> opengl show<span class="org-rainbow-delimiters-depth-3">)</span> <span class="org-negation-char">!</span>= nvidia <span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span> ; <span class="org-keyword">then</span>
+        eselect opengl set nvidia &amp;&gt;/dev/null
+    <span class="org-keyword">fi</span>
+    cp /etc/X11/xorg.conf_working_nvidia /etc/X11/xorg.conf
+<span class="org-keyword">else</span>
+    <span class="org-builtin">echo</span> -e <span class="org-string">"install nvidia /bin/false\ninstall nvidia_modeset /bin/false\ninstall nvidia_drm /bin/false"</span> &gt; /etc/modprobe.d/blacklist-nvidia.conf
+
+    rmmod nvidia_drm || :
+    rmmod nvidia_modeset || :
+    rmmod nvidia || :
+
+    <span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-1">[</span> -f /etc/X11/xorg.conf <span class="org-rainbow-delimiters-depth-1">]</span> ; <span class="org-keyword">then</span>
+        rm /etc/X11/xorg.conf
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-1">[</span><span class="org-rainbow-delimiters-depth-2">[</span> $<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-sh-quoted-exec">eselect</span> opengl show<span class="org-rainbow-delimiters-depth-3">)</span> <span class="org-negation-char">!</span>= xorg-x11 <span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span> ; <span class="org-keyword">then</span>
+        eselect opengl set xorg-x11 &amp;&gt;/dev/null
+    <span class="org-keyword">fi</span>
+<span class="org-keyword">fi</span>
+</pre>
+</div>
+
+<p>
+/usr/share/sddm/scripts/Xsetup:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">sh</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Xsetup - run as root before the login dialog appears</span>
+
+<span class="org-keyword">if</span> dmesg | grep -i <span class="org-string">'command line'</span> | grep -q <span class="org-string">'GPUMOD=nvidia'</span> ; <span class="org-keyword">then</span>
+    xrandr --setprovideroutputsource modesetting NVIDIA-0
+    xrandr --auto
+<span class="org-keyword">fi</span>
+</pre>
+</div>
+
+<p>
+/etc/X11/xorg.conf_working_nvidia:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">Section <span class="org-string">"Files"</span>
+  ModulePath <span class="org-string">"/usr/lib/opengl/nvidia"</span>
+  ModulePath <span class="org-string">"/usr/lib32/opengl/nvidia"</span>
+  ModulePath <span class="org-string">"/usr/lib32/xorg/modules"</span>
+  ModulePath <span class="org-string">"/usr/lib64/opengl/nvidia/xorg"</span>
+  ModulePath <span class="org-string">"/usr/lib64/xorg/modules"</span>
+EndSection
+
+Section <span class="org-string">"ServerLayout"</span>
+  Identifier <span class="org-string">"layout"</span>
+  Screen 1 <span class="org-string">"nvidia"</span>
+  Inactive <span class="org-string">"intel"</span>
+EndSection
+
+Section <span class="org-string">"Device"</span>
+  Identifier <span class="org-string">"nvidia"</span>
+  Driver <span class="org-string">"nvidia"</span>
+  BusID <span class="org-string">"PCI:2:0:0"</span>
+EndSection
+
+Section <span class="org-string">"Screen"</span>
+  Identifier <span class="org-string">"nvidia"</span>
+  Device <span class="org-string">"nvidia"</span>
+  <span class="org-comment-delimiter">#</span><span class="org-comment">Option "AllowEmptyInitialConfiguration" "Yes"</span>
+  <span class="org-comment-delimiter">#</span><span class="org-comment">Option "UseDisplayDevice" "none"</span>
+EndSection
+
+Section <span class="org-string">"Device"</span>
+  Identifier <span class="org-string">"intel"</span>
+  Driver <span class="org-string">"modesetting"</span>
+  Option <span class="org-string">"AccelMethod"</span> <span class="org-string">"none"</span>
+EndSection
+
+Section <span class="org-string">"Screen"</span>
+  Identifier <span class="org-string">"intel"</span>
+  Device <span class="org-string">"intel"</span>
+EndSection
+</pre>
+</div>
+</div>
+<div id="postamble" class="status">
+2020
+</div>
+</body>
+</html>

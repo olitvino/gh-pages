@@ -1,0 +1,95 @@
+#+TITLE: config
+#+TIMESTAMP: Thu May 28 02:53:20 2020
+#+SETUPFILE: ~/org/blog/src/tpl/main.org
+
+#+BEGIN_SRC emacs-lisp
+(defvar kb-src-dir "~/org/blog/src")
+(defvar kb-pub-dir "~/org/blog/pub")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun kb-page-path (name)
+   "Page path from NAME."
+   (format "%s/%s.org" kb-src-dir name))
+
+  (defun kb-page-exists (name)
+    "Check if page NAME exists."
+    (file-exists-p (kb-page-path name)))
+
+  (defun kb-dirname (name)
+    "Get dirname for page NAME."
+    (replace-regexp-in-string "[^/]+$" "" (kb-page-path name)))
+
+  (defun kb-add-page ()
+    "Ask user for a page name and create it."
+    (interactive)
+    (let ((name (read-string "Enter the page name: ")))
+      (if (kb-page-exists name)
+          (find-file (kb-page-path name))
+        (progn
+          (unless (file-directory-p (kb-dirname name))
+            (message (kb-dirname name))
+            (make-directory (kb-dirname name) t))
+          (find-file (kb-page-path name))
+          (insert (format (concat "#+TITLE: %s\n"
+                                  "#+TIMESTAMP: %s\n"
+                                  "#+SETUPFILE: %s/tpl/main.org"
+                                  "\n\n")
+                          (replace-regexp-in-string ".*/\\([^/]+\\)$" "\\1" name)
+                          (current-time-string)
+                          kb-src-dir))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (require 'htmlize)
+  (require 'ox-publish)
+
+  (defun kb-preamble(_plist)
+    "Preamble for whole blog."
+    "<a href=\"/about.html\">about</a>"
+    )
+
+  (defun kb-postamble(_plist)
+    "Postamble for whole blog."
+    "2020"
+    )
+
+  (setq org-html-head-include-default-style t
+        org-html-style-default "<link rel=\"stylesheet\" href=\"https://gongzhitaao.org/orgcss/org.css\" type=\"text/css\"/>"
+        org-html-head-include-scripts t
+        org-html-htmlize-output-type 'css)
+
+  (setq org-publish-project-alist
+        '(
+          ("org-notes"
+           :base-directory "~/org/blog/src"
+           :base-extension "org"
+           :publishing-directory "~/org/blog/pub"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :author "AJGreen"
+           :email " alexander.jake.green@gmail.com"
+           :language "en"
+           :link_home "index.html"
+           :headline-levels 4
+           :with-author nil
+           :html-preamble kb-preamble
+           :html-postamble kb-postamble)
+          ("org-static"
+           :base-directory "~/org/blog/css"
+           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+           :publishing-directory "~/org/blog/pub"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org-static2"
+           :base-directory "~/org/blog/src"
+           :base-extension "png\\|jpg\\|gif"
+           :publishing-directory "~/org/blog/pub"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org" :components ("org-notes" "org-static" "org-static2"))
+          ))
+
+  (org-publish "org")
+#+END_SRC
+

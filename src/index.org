@@ -1,0 +1,27 @@
+#+TITLE: Index
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+Hi there! I'm going to write something about Ruby, Emacs, Java, Linux, CI/CD, Nginx and other interesting stuff
+
+- [[file:config.org][This site config]]
+- [[file:linux/nvidia/optimus/libglvnd/2020/03/10/nvidia-libglvnd.org][Nvidia Optimus: libglvnd]]
+- [[file:linux/gentoo/kde/wallet/2019/11/11/kdewallet-asks-password.org][Updated /etc/pam.d/sddm but kde wallet still asks password]]
+- [[file:linux/nvidia/optimus/systemd/2019/11/05/nvidia-optimus-systemd.org][Nvidia Optimus: Switch on Boot with Systemd]]
+- [[file:linux/gentoo/nvidia/optimus/2019/04/22/gentoo-nvidia-optimus.org][Nvidia Optimus: Switch on Boot]]
+- [[file:skype/tray/icon/2018/11/08/skypeforlinux-fix-tray-icon.org][Skypeforlinux: fix tray icon]]
+- [[file:raspberry/pi/3/golang/2017/08/27/raspberry-pi-install-golang.org][Raspberry Pi 3 Install Golang]]
+- [[file:docker/overlay/namespace/2017/08/14/nsenter-invalid-argument.org][Nsenter Invalid Argument]]
+- [[file:docker/overlay/namespace/2017/08/28/docker-overlay-network.org][Docker overlay network]]
+- [[file:emacs/2017/07/23/emacs-font-face.org][Emacs font face]]
+- [[file:devops/2017/03/28/devops-tech-interview-question.org][The question from a DevOps interview]]
+- [[file:xscreensaver/2017/02/24/xscreensaver-text-message.org][XScreenSaver: customize the message of the day]]
+- [[file:sha1/2017/02/23/sha-1-collision.org][The first collision for full SHA-1]]
+- [[file:xcode/2017/02/11/xcode-expected-expression.org][Xcode: Expected expression]]
+- [[file:vagrant/2017/02/10/vagrant_vagrant-persistent-storage_plugin.org][Vagrant: persistent storage plugin]]
+- [[file:java/maven/2016/09/24/maven-start.org][Maven start]]
+- [[file:jokes/2016/05/09/so_my_girlfriend_said.org][My Girlfriend Said]]
+- [[file:rails/rake/todo/2016/05/07/rake-notes-keep-todos-in-rails-code.org][rake notes - keep your TODOs in the code]]
+- [[file:bash/regexp/2016/04/14/split-numbers-by-three.org][Split number by groups with three digits]]
+- [[file:ruby/2016/04/12/ruby-object-graph.org][Ruby Objects Graph]]
+- [[file:gtk2/perl/2016/03/30/tray-icons-perl.org][Gtk2 Icon Perl Example]]
+- [[file:nginx/2016/02/10/nginx-limit-reqs.org][Limit requests in Nginx]]

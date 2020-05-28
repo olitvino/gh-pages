@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-05-28 Thu 02:00 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gtk2 Icon Perl Example</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://gongzhitaao.org/orgcss/org.css" type="text/css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+<script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class"),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/googlecode.min.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<a href="/about.html">about</a>
+</div>
+<div id="content">
+<h1 class="title">Gtk2 Icon Perl Example</h1>
+<p>
+Icons in tray. Example. Shows a number <code>$i</code> in a tray, increments it every 1,5 seconds.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/perl</span>
+<span class="org-keyword">use</span> <span class="org-constant">strict</span>;
+<span class="org-keyword">use</span> <span class="org-constant">warnings</span>;
+<span class="org-keyword">use</span> <span class="org-constant">Gtk2</span>;
+<span class="org-keyword">use</span> <span class="org-constant">Gtk2</span>::TrayIcon;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span class="org-type">my</span> <span class="org-rainbow-delimiters-depth-1">(</span>$<span class="org-variable-name">icon</span>, $<span class="org-variable-name">label</span>, $<span class="org-variable-name">eventbox</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+<span class="org-type">my</span> $<span class="org-variable-name">i</span>=0;
+<span class="org-type">my</span> $<span class="org-variable-name">timeout</span> = 1500; <span class="org-comment">#ms</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span class="org-keyword">sub</span> <span class="org-function-name">label_refresh</span><span class="org-rainbow-delimiters-depth-1">{</span>
+   <span class="org-type">my</span> $<span class="org-variable-name">text</span> = shift;
+   $<span class="org-variable-name">label</span>-&gt;set_label<span class="org-rainbow-delimiters-depth-2">(</span>$<span class="org-variable-name">text</span><span class="org-rainbow-delimiters-depth-2">)</span>;
+<span class="org-rainbow-delimiters-depth-1">}</span>;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span class="org-keyword">sub</span> <span class="org-function-name">get_value</span><span class="org-rainbow-delimiters-depth-1">{</span>
+   <span class="org-keyword">return</span> ++$<span class="org-variable-name">i</span>;
+<span class="org-rainbow-delimiters-depth-1">}</span>;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl">Gtk2-&gt;init<span class="org-rainbow-delimiters-depth-1">()</span>;
+$<span class="org-variable-name">icon</span> = Gtk2::TrayIcon-&gt;new<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"MI count applet"</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+$<span class="org-variable-name">eventbox</span> = Gtk2::EventBox-&gt;new<span class="org-rainbow-delimiters-depth-1">()</span>;
+$<span class="org-variable-name">label</span> = Gtk2::Label-&gt;new<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"0"</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+$<span class="org-variable-name">eventbox</span>-&gt;add<span class="org-rainbow-delimiters-depth-1">(</span>$<span class="org-variable-name">label</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+$<span class="org-variable-name">icon</span>-&gt;add<span class="org-rainbow-delimiters-depth-1">(</span>$<span class="org-variable-name">eventbox</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl">&amp;<span class="org-function-name">label_refresh</span><span class="org-rainbow-delimiters-depth-1">(</span>&amp;<span class="org-function-name">get_value</span><span class="org-rainbow-delimiters-depth-2">()</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl">Glib::Timeout-&gt;add<span class="org-rainbow-delimiters-depth-1">(</span>$<span class="org-variable-name">timeout</span>, <span class="org-keyword">sub</span> <span class="org-rainbow-delimiters-depth-2">{</span> &amp;<span class="org-function-name">label_refresh</span><span class="org-rainbow-delimiters-depth-3">(</span>&amp;<span class="org-function-name">get_value</span><span class="org-rainbow-delimiters-depth-4">()</span><span class="org-rainbow-delimiters-depth-3">)</span>; 1;<span class="org-rainbow-delimiters-depth-2">}</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-perl">$<span class="org-variable-name">icon</span>-&gt;show_all<span class="org-rainbow-delimiters-depth-1">()</span>;
+Gtk2-&gt;main<span class="org-rainbow-delimiters-depth-1">()</span>;
+<span class="org-keyword">exit</span> $?;
+</pre>
+</div>
+</div>
+<div id="postamble" class="status">
+2020
+</div>
+</body>
+</html>

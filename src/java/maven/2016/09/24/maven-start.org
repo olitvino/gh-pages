@@ -1,0 +1,31 @@
+#+TITLE: Maven start
+#+TIMESTAMP: 2016-09-24
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+Create project
+#+BEGIN_SRC bash
+$ mvn archetype:generate -DgroupId=ua.org.jee.tutorial \
+  -DartifactId=simple \
+  -Dpackage=ua.org.jee.tutorial \
+  -Dversion=1.0-SNAPSHOT
+#+END_SRC
+
+Build project
+
+#+BEGIN_SRC bash
+$ cd simple
+$ mvn install
+#+END_SRC
+
+Run project
+
+#+BEGIN_SRC bash
+$ java -cp target/simple-1.0-SNAPSHOT.jar ua.org.jee.tutorial.App
+Hello World!
+#+END_SRC
+
+Effective pom
+
+#+BEGIN_SRC bash
+$ mvn help:effective-pom
+#+END_SRC

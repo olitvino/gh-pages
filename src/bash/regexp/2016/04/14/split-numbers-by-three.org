@@ -1,0 +1,19 @@
+#+TITLE: Split number by groups with three digits
+#+TIMESTAMP: 2016-04-14
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+#+BEGIN_SRC bash
+$ ls /tmp -al
+-rw-------  1 user user 667030687 Apr 14 11:06 huge.log.gz
+#+END_SRC
+
+#+BEGIN_SRC bash
+groupnum() {
+  perl -pe 's;(?<=\d)(\d{3})(?=(\d{3})*(\D|$));.$1;g;'
+}
+#+END_SRC
+
+#+BEGIN_SRC bash
+$ ls /tmp -al | groupnum
+-rw-------  1 user user 667.030.687 Apr 14 11:06 huge.log.gz
+#+END_SRC

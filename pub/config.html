@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-05-28 Thu 02:57 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>config</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://gongzhitaao.org/orgcss/org.css" type="text/css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<a href="/about.html">about</a>
+</div>
+<div id="content">
+<h1 class="title">config</h1>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defvar</span> <span class="org-variable-name">kb-src-dir</span> <span class="org-string">"~/org/blog/src"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defvar</span> <span class="org-variable-name">kb-pub-dir</span> <span class="org-string">"~/org/blog/pub"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kb-page-path</span> <span class="org-rainbow-delimiters-depth-2">(</span>name<span class="org-rainbow-delimiters-depth-2">)</span>
+ <span class="org-doc">"Page path from NAME."</span>
+ <span class="org-rainbow-delimiters-depth-2">(</span>format <span class="org-string">"%s/%s.org"</span> kb-src-dir name<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kb-page-exists</span> <span class="org-rainbow-delimiters-depth-2">(</span>name<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Check if page NAME exists."</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>file-exists-p <span class="org-rainbow-delimiters-depth-3">(</span>kb-page-path name<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kb-dirname</span> <span class="org-rainbow-delimiters-depth-2">(</span>name<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Get dirname for page NAME."</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>replace-regexp-in-string <span class="org-string">"[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">/]+$"</span> <span class="org-string">""</span> <span class="org-rainbow-delimiters-depth-3">(</span>kb-page-path name<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kb-add-page</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-doc">"Ask user for a page name and create it."</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>name <span class="org-rainbow-delimiters-depth-5">(</span>read-string <span class="org-string">"Enter the page name: "</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-4">(</span>kb-page-exists name<span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span>find-file <span class="org-rainbow-delimiters-depth-5">(</span>kb-page-path name<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">progn</span>
+        <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">unless</span> <span class="org-rainbow-delimiters-depth-6">(</span>file-directory-p <span class="org-rainbow-delimiters-depth-7">(</span>kb-dirname name<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span>
+          <span class="org-rainbow-delimiters-depth-6">(</span>message <span class="org-rainbow-delimiters-depth-7">(</span>kb-dirname name<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span>
+          <span class="org-rainbow-delimiters-depth-6">(</span>make-directory <span class="org-rainbow-delimiters-depth-7">(</span>kb-dirname name<span class="org-rainbow-delimiters-depth-7">)</span> t<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+        <span class="org-rainbow-delimiters-depth-5">(</span>find-file <span class="org-rainbow-delimiters-depth-6">(</span>kb-page-path name<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+        <span class="org-rainbow-delimiters-depth-5">(</span>insert <span class="org-rainbow-delimiters-depth-6">(</span>format <span class="org-rainbow-delimiters-depth-7">(</span>concat <span class="org-string">"#+TITLE: %s\n"</span>
+                                <span class="org-string">"#+TIMESTAMP: %s\n"</span>
+                                <span class="org-string">"#+SETUPFILE: %s/tpl/main.org"</span>
+                                <span class="org-string">"\n\n"</span><span class="org-rainbow-delimiters-depth-7">)</span>
+                        <span class="org-rainbow-delimiters-depth-7">(</span>replace-regexp-in-string <span class="org-string">".*/</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">/]+</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">$"</span> <span class="org-string">"\\1"</span> name<span class="org-rainbow-delimiters-depth-7">)</span>
+                        <span class="org-rainbow-delimiters-depth-7">(</span>current-time-string<span class="org-rainbow-delimiters-depth-7">)</span>
+                        kb-src-dir<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">require</span> '<span class="org-constant">htmlize</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">require</span> '<span class="org-constant">ox-publish</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kb-preamble</span><span class="org-rainbow-delimiters-depth-2">(</span>_plist<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Preamble for whole blog."</span>
+  <span class="org-string">"&lt;a href=\"/about.html\"&gt;about&lt;/a&gt;"</span>
+  <span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kb-postamble</span><span class="org-rainbow-delimiters-depth-2">(</span>_plist<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Postamble for whole blog."</span>
+  <span class="org-string">"2020"</span>
+  <span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-html-head-include-default-style t
+      org-html-style-default <span class="org-string">"&lt;link rel=\"stylesheet\" href=\"https://gongzhitaao.org/orgcss/org.css\" type=\"text/css\"/&gt;"</span>
+      org-html-head-include-scripts t
+      org-html-htmlize-output-type 'css<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-publish-project-alist
+      '<span class="org-rainbow-delimiters-depth-2">(</span>
+        <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"org-notes"</span>
+         <span class="org-builtin">:base-directory</span> <span class="org-string">"~/org/blog/src"</span>
+         <span class="org-builtin">:base-extension</span> <span class="org-string">"org"</span>
+         <span class="org-builtin">:publishing-directory</span> <span class="org-string">"~/org/blog/pub"</span>
+         <span class="org-builtin">:recursive</span> t
+         <span class="org-builtin">:publishing-function</span> org-html-publish-to-html
+         <span class="org-builtin">:author</span> <span class="org-string">"AJGreen"</span>
+         <span class="org-builtin">:email</span> <span class="org-string">"alex@faraniki.com"</span>
+         <span class="org-builtin">:language</span> <span class="org-string">"en"</span>
+         <span class="org-builtin">:link_home</span> <span class="org-string">"index.html"</span>
+         <span class="org-builtin">:headline-levels</span> 4
+         <span class="org-builtin">:with-author</span> nil
+         <span class="org-builtin">:html-preamble</span> kb-preamble
+         <span class="org-builtin">:html-postamble</span> kb-postamble<span class="org-rainbow-delimiters-depth-3">)</span>
+        <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"org-static"</span>
+         <span class="org-builtin">:base-directory</span> <span class="org-string">"~/org/blog/css"</span>
+         <span class="org-builtin">:base-extension</span> <span class="org-string">"css</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">js</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">png</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">jpg</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">gif</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">pdf</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">mp3</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">ogg</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">swf"</span>
+         <span class="org-builtin">:publishing-directory</span> <span class="org-string">"~/org/blog/pub"</span>
+         <span class="org-builtin">:recursive</span> t
+         <span class="org-builtin">:publishing-function</span> org-publish-attachment<span class="org-rainbow-delimiters-depth-3">)</span>
+        <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"org-static2"</span>
+         <span class="org-builtin">:base-directory</span> <span class="org-string">"~/org/blog/src"</span>
+         <span class="org-builtin">:base-extension</span> <span class="org-string">"png</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">jpg</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">gif"</span>
+         <span class="org-builtin">:publishing-directory</span> <span class="org-string">"~/org/blog/pub"</span>
+         <span class="org-builtin">:recursive</span> t
+         <span class="org-builtin">:publishing-function</span> org-publish-attachment<span class="org-rainbow-delimiters-depth-3">)</span>
+        <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"org"</span> <span class="org-builtin">:components</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-string">"org-notes"</span> <span class="org-string">"org-static"</span> <span class="org-string">"org-static2"</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+        <span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>org-publish <span class="org-string">"org"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+<div id="postamble" class="status">
+2020
+</div>
+</body>
+</html>

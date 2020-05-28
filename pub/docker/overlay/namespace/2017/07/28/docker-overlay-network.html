@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-05-28 Thu 02:32 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Docker overlay network</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://gongzhitaao.org/orgcss/org.css" type="text/css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+<script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class"),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/googlecode.min.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<a href="/about.html">about</a>
+</div>
+<div id="content">
+<h1 class="title">Docker overlay network</h1>
+<p>
+The purpose of this work is to investigate how overlay network works under the hood.
+</p>
+
+<p>
+Before we start, create a swarm cluster as it is described in <a href="https://docs.docker.com/engine/swarm/swarm-tutorial">Swarm Tutorial</a>
+or take this <a href="https://gist.github.com/AlexJakeGreen/1c49d08fe429e744638d7623f8909206">Vagrant file</a> and set your box with guest additions.
+</p>
+
+<p>
+Create an overlay network and a service
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker network create <span class="org-sh-escaped-newline">\</span>
+                      --driver overlay --subnet 192.168.55.0/24 mynet
+qhmpedvga9n8xn6hg7tqwqi3v
+
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker service create <span class="org-sh-escaped-newline">\</span>
+                      --replicas 2 --name service1 <span class="org-sh-escaped-newline">\</span>
+                      --network mynet centos:7 sleep 7200
+se8wl46ymy0wtmwg7be561qv3
+
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker service ps service1
+ID                  NAME                IMAGE               NODE                DESIRED STATE
+jg9lrlz68cdy        service1.1          centos:7            worker1             Running
+ih9dv2hqp88p        service1.2          centos:7            manager             Running
+</pre>
+</div>
+
+<p>
+<code>ip netns</code> looks for network namespaces in <code>/var/run/netns</code>, but Docker keeps them in different place and does not create symlink. Let's create it by hands:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ln -s /var/run/docker/netns /var/run/netns
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns ls
+<span class="org-function-name">d7b2c48c9596</span> <span class="org-rainbow-delimiters-depth-1">(</span>id: 4<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-function-name">1-qhmpedvga9</span> <span class="org-rainbow-delimiters-depth-1">(</span>id: 3<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-function-name">1-d4j6wl1h53</span> <span class="org-rainbow-delimiters-depth-1">(</span>id: 0<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-function-name">ingress_sbox</span> <span class="org-rainbow-delimiters-depth-1">(</span>id: 1<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+<code>d7b2c48c9596</code> is a network namespace of a container running on this node:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker ps
+CONTAINER ID        IMAGE               COMMAND
+2ccc289ad154        centos:7            <span class="org-string">"sleep 7200"</span>
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker inspect --format <span class="org-string">'{% raw %}{{.NetworkSettings.SandboxKey}}{% endraw %}'</span> 2ccc289ad154
+/var/run/docker/netns/d7b2c48c9596
+
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns exec d7b2c48c9596 ip addr show eth0
+22: eth0@if23: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UP
+    link/ether 02:42:c0:a8:37:04 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 192.168.55.4/24 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet 192.168.55.2/32 scope global eth0
+       valid_lft forever preferred_lft forever
+</pre>
+</div>
+
+<p>
+<code>1-d4j6wl1h53</code> is actually a namespace for overlay network created by <code>swarm init</code>,
+<code>1-qhmpedvga9</code> is our created network named <code>mynet</code>:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+74085784b064        bridge              bridge              local
+8cfbba323428        docker_gwbridge     bridge              local
+0219b460f977        host                host                local
+d4j6wl1h53pm        ingress             overlay             swarm
+qhmpedvga9n8        mynet               overlay             swarm
+6778312ead85        none                null                local
+</pre>
+</div>
+
+<p>
+It's time to look inside overlay network namespace:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns exec 1-qhmpedvga9 ip -d link show
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0 addrgenmode eui64 
+2: br0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UP mode DEFAULT 
+    link/ether 52:33:20:40:d1:d0 brd ff:ff:ff:ff:ff:ff promiscuity 0 
+    bridge forward_delay 1500 hello_time 200 max_age 2000 addrgenmode eui64 
+21: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master br0 state UNKNOWN mode DEFAULT 
+    link/ether 52:33:20:40:d1:d0 brd ff:ff:ff:ff:ff:ff link-netnsid 0 promiscuity 1 
+    vxlan id 4097 srcport 0 0 dstport 4789 proxy l2miss l3miss ageing 300 
+    bridge_slave addrgenmode eui64 
+23: veth0@if22: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master br0 state UP mode DEFAULT 
+    link/ether 62:89:ad:a6:98:f1 brd ff:ff:ff:ff:ff:ff link-netnsid 1 promiscuity 1 
+    veth 
+    bridge_slave addrgenmode eui64
+</pre>
+</div>
+
+<p>
+<code>veth0</code> is a peer interface of eth0 inside container
+<code>vxlan0</code> is a virtual network interface for containers inter-node communication
+<code>br0</code> is a bridge connecting all `vethN` and `vxlan0` together
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns exec 1-qhmpedvga9 bridge link show
+21: vxlan0 state UNKNOWN : &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 master br0 state forwarding priority 32 cost 100 
+23: veth0 state UP @<span class="org-rainbow-delimiters-depth-1">(</span>null<span class="org-rainbow-delimiters-depth-1">)</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 master br0 state forwarding priority 32 cost 2 
+</pre>
+</div>
+
+<p>
+<code>02:42:c0:a8:37:04</code> is a container <code>2ccc289ad154</code> running on manager node and container ip address is 192.168.55.4
+<code>02:42:c0:a8:37:03</code> - container <code>6de050036519</code> running on worker node, container ip is 192.168.55.3
+</p>
+
+<p>
+Now it's clear to us that the communication between nodes works over `VXLAN` driver.
+But how Docker's VXLAN is juggling on L2 level, how MAC addresses are being populated between nodes?
+Start <code>arping</code> from first container and inspect network traffic in second one, observe there are no any arp requests received on remote container side:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>root@2ccc289ad154 /<span class="org-rainbow-delimiters-depth-1">]</span># arping -I eth0 192.168.55.3
+ARPING 192.168.55.3 from 192.168.55.4 eth0
+Unicast reply from 192.168.55.3 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:03<span class="org-rainbow-delimiters-depth-1">]</span>  0.615ms
+Unicast reply from 192.168.55.3 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:03<span class="org-rainbow-delimiters-depth-1">]</span>  0.551ms
+Unicast reply from 192.168.55.3 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:03<span class="org-rainbow-delimiters-depth-1">]</span>  0.686ms
+Unicast reply from 192.168.55.3 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:03<span class="org-rainbow-delimiters-depth-1">]</span>  0.570ms
+***
+
+<span class="org-rainbow-delimiters-depth-1">[</span>root@6de050036519 /<span class="org-rainbow-delimiters-depth-1">]</span># tcpdump -qlni eth0 arp
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on eth0, link-type EN10MB <span class="org-rainbow-delimiters-depth-1">(</span>Ethernet<span class="org-rainbow-delimiters-depth-1">)</span>, capture size 65535 bytes
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Nothing here!</span>
+</pre>
+</div>
+
+<p>
+In case both containers running inside the same node, we can sniff all arp broadcast from all this node containers:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker service scale <span class="org-variable-name">se8wl46ymy0w</span>=3
+se8wl46ymy0w scaled to 3
+
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ docker service ps --format <span class="org-string">'{% raw %}table {{.ID}}\t{{.Node}}{% endraw %}'</span> se8wl46ymy0w
+ID                  NODE
+jg9lrlz68cdy        worker1
+ih9dv2hqp88p        manager
+x1gmh1pztgjf        manager
+<span class="org-comment-delimiter"># </span><span class="org-comment">two tasks are running on manager node</span>
+
+***
+<span class="org-rainbow-delimiters-depth-1">[</span>root@0f834be1f266 /<span class="org-rainbow-delimiters-depth-1">]</span># arping -I eth0 192.168.55.4
+ARPING 192.168.55.4 from 192.168.55.5 eth0
+Unicast reply from 192.168.55.4 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:04<span class="org-rainbow-delimiters-depth-1">]</span>  0.563ms
+Unicast reply from 192.168.55.4 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:04<span class="org-rainbow-delimiters-depth-1">]</span>  0.582ms
+Unicast reply from 192.168.55.4 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:04<span class="org-rainbow-delimiters-depth-1">]</span>  0.561ms
+Unicast reply from 192.168.55.4 <span class="org-rainbow-delimiters-depth-1">[</span>02:42:C0:A8:37:04<span class="org-rainbow-delimiters-depth-1">]</span>  0.560ms
+
+***
+<span class="org-rainbow-delimiters-depth-1">[</span>root@2ccc289ad154 /<span class="org-rainbow-delimiters-depth-1">]</span># tcpdump -qlni eth0 arp
+11:26:11.750195 ARP, Request who-has 192.168.55.4 <span class="org-rainbow-delimiters-depth-1">(</span>Broadcast<span class="org-rainbow-delimiters-depth-1">)</span> tell 192.168.55.5, length 28
+11:26:11.750215 ARP, Reply 192.168.55.4 is-at 02:42:c0:a8:37:04, length 28
+11:26:12.750337 ARP, Request who-has 192.168.55.4 <span class="org-rainbow-delimiters-depth-1">(</span>02:42:c0:a8:37:04<span class="org-rainbow-delimiters-depth-1">)</span> tell 192.168.55.5, length 28
+11:26:12.750353 ARP, Reply 192.168.55.4 is-at 02:42:c0:a8:37:04, length 28
+</pre>
+</div>
+
+<p>
+ARP, FDB tables.
+Containers from the same node communicate via br0, and MAC address learning works via broadcasts.
+For containers running on different nodes the information is dynamically populated by Docker, see <code>permanent</code> flag:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns exec 1-qhmpedvga9 bridge fdb show
+02:42:c0:a8:37:05 dev veth1 master br0 
+02:42:c0:a8:37:04 dev veth0 master br0 
+02:42:c0:a8:37:03 dev vxlan0 master br0 
+02:42:c0:a8:37:03 dev vxlan0 dst 10.10.10.21 link-netnsid 0 self permanent
+02:42:c0:a8:37:04 dev vxlan0 dst 10.10.10.21 link-netnsid 0 self permanent
+
+<span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns exec 1-qhmpedvga9 ip neigh show
+192.168.55.4 dev vxlan0 lladdr 02:42:c0:a8:37:04 PERMANENT
+192.168.55.3 dev vxlan0 lladdr 02:42:c0:a8:37:03 PERMANENT
+</pre>
+</div>
+<p>
+Since Docker manages fdb/arp entries on vxlan0, arp-learning is disabled and vxlan0 acts as arp-proxy (see the <code>proxy</code> flag):
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span class="org-rainbow-delimiters-depth-1">[</span>vagrant@manager ~<span class="org-rainbow-delimiters-depth-1">]</span>$ sudo ip netns exec 1-qhmpedvga9 ip -d link show vxlan0
+21: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master br0 state UNKNOWN mode DEFAULT 
+    link/ether 52:33:20:40:d1:d0 brd ff:ff:ff:ff:ff:ff link-netnsid 0 promiscuity 1 
+    vxlan id 4097 srcport 0 0 dstport 4789 proxy l2miss l3miss ageing 300 
+    bridge_slave addrgenmode eui64
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="docker_overlay_network.png" alt="docker_overlay_network.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>Docker Overlay Network Interfaces</p>
+</div>
+</div>
+<div id="postamble" class="status">
+2020
+</div>
+</body>
+</html>

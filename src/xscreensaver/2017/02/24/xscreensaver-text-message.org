@@ -1,0 +1,11 @@
+#+TITLE: XScreenSaver: customize the message of the day
+#+TIMESTAMP: 2017-02-24
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+~/.xscreensaver:
+#+BEGIN_SRC config
+textMode:       program
+textProgram:    fortune
+#+END_SRC
+
+[[file:xscreensaver.png]]

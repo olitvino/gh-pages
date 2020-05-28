@@ -1,0 +1,15 @@
+#+TITLE: Vagrant: persistent storage plugin
+#+TIMESTAMP: 2017-02-10
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+[[https://github.com/kusnier/vagrant-persistent-storage][Project page]]
+
+#+BEGIN_SRC bash
+$ vagrant plugin install vagrant-persistent-storage
+#+END_SRC
+
+#+BEGIN_SRC ruby
+config.persistent_storage.enabled = true
+config.persistent_storage.location = "~/development/sourcehdd.vdi"
+config.persistent_storage.size = 5000
+#+END_SRC

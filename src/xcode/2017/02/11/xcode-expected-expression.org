@@ -1,0 +1,15 @@
+#+TITLE: Xcode: Expected expression
+#+TIMESTAMP: 2017-02-11
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+If Xcode says 'Expected expression'
+
+[[file:xcode-expected-expression.png]]
+
+ and you have no clue what is causing this message,
+
+try to check invisible symbols =Editor -> Show Invisibles=:
+
+[[file:xcode-editor-show-hidden-characters.png]]
+
+=^S= is =Ctrl-x-s= sequence quite often used in Emacs.

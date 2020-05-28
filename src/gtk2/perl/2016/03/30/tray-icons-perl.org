@@ -1,0 +1,56 @@
+#+TITLE: Gtk2 Icon Perl Example
+#+TIMESTAMP: 2016-03-30
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+
+Icons in tray. Example. Shows a number =$i= in a tray, increments it every 1,5 seconds.
+
+#+BEGIN_SRC perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Gtk2;
+use Gtk2::TrayIcon;
+#+END_SRC
+
+#+BEGIN_SRC perl
+my ($icon, $label, $eventbox);
+my $i=0;
+my $timeout = 1500; #ms
+#+END_SRC
+
+#+BEGIN_SRC perl
+sub label_refresh{
+   my $text = shift;
+   $label->set_label($text);
+};
+#+END_SRC
+
+#+BEGIN_SRC perl
+sub get_value{
+   return ++$i;
+};
+#+END_SRC
+
+#+BEGIN_SRC perl
+Gtk2->init();
+$icon = Gtk2::TrayIcon->new("MI count applet");
+$eventbox = Gtk2::EventBox->new();
+$label = Gtk2::Label->new("0");
+$eventbox->add($label);
+$icon->add($eventbox);
+#+END_SRC
+
+#+BEGIN_SRC perl
+&label_refresh(&get_value());
+#+END_SRC
+
+#+BEGIN_SRC perl
+Glib::Timeout->add($timeout, sub { &label_refresh(&get_value()); 1;});
+#+END_SRC
+
+#+BEGIN_SRC perl
+$icon->show_all();
+Gtk2->main();
+exit $?;
+#+END_SRC
