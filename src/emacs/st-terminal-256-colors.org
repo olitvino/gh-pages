@@ -14,4 +14,4 @@ Put this in your init.el:
              '("st-256color" . "xterm-256color"))
 #+END_SRC
 
-Details in /usr/share/emacs/27.1/lisp/term/xterm.el
+Details in =/usr/share/emacs/27.1/lisp/term/xterm.el=

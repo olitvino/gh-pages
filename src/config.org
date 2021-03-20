@@ -52,7 +52,7 @@
 
   (defun kb-postamble(_plist)
     "Postamble for whole blog."
-    "2020"
+    "2021"
     )
 
   (setq org-html-head-include-default-style t
