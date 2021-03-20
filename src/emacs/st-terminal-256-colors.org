@@ -1,0 +1,17 @@
+#+TITLE: St Emacs 256 colors
+#+TIMESTAMP: 2021-03-19
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+Emacs starts very slowly in st with default settings.
+
+Put this in your init.el:
+
+#+BEGIN_SRC emacs-lisp
+(defvar xterm-extra-capabilities nil)
+(defvar xterm-query-timeout nil)
+
+(add-to-list 'term-file-aliases
+             '("st-256color" . "xterm-256color"))
+#+END_SRC
+
+Details in /usr/share/emacs/27.1/lisp/term/xterm.el

@@ -3,6 +3,7 @@
 
 Hi there! I'm going to write something about Ruby, Emacs, Java, Linux, CI/CD, Nginx and other interesting stuff
 
+- [[file:emacs/st-terminal-256-colors.org][St terminal Emacs 256 colors]]
 - [[file:config.org][This site config]]
 - [[file:linux/nvidia/optimus/libglvnd/2020/03/10/nvidia-libglvnd.org][Nvidia Optimus: libglvnd]]
 - [[file:linux/gentoo/kde/wallet/2019/11/11/kdewallet-asks-password.org][Updated /etc/pam.d/sddm but kde wallet still asks password]]

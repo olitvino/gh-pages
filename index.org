@@ -1,0 +1,8 @@
+#+TITLE: index
+#+DESCRIPTION:
+#+TIMESTAMP: Sat Mar 20 13:10:29 2021
+#+STARTUP:  content
+
+
+- [[blog:/index][Index Page]]
+

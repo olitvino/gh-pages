@@ -6,7 +6,7 @@
 <!-- 2021-03-20 Sat 13:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>rake notes - keep your TODOs in the code</title>
+<title>St Emacs 256 colors</title>
 <meta name="generator" content="Org mode" />
 <link rel="stylesheet" href="https://gongzhitaao.org/orgcss/org.css" type="text/css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
@@ -64,26 +64,26 @@ for the JavaScript code in this tag.
 <a href="/about.html">about</a>
 </div>
 <div id="content">
-<h1 class="title">rake notes - keep your TODOs in the code</h1>
+<h1 class="title">St Emacs 256 colors</h1>
 <p>
-<code>rake notes</code> will search through your code for comments beginning with <code>FIXME</code>, <code>OPTIMIZE</code> or <code>TODO</code>.
-The search is done in files with extension <b>.builder</b>, <b>.rb</b>, <b>.rake</b>, <b>.yml</b>, <b>.yaml</b>, <b>.ruby</b>, <b>.css</b>, <b>.js</b> and <b>.erb</b> for both default and custom annotations.
+Emacs starts very slowly in st with default settings.
+</p>
+
+<p>
+Put this in your init.el:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">$ bin/rake notes
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">in</span> /home/foobar/commandsapp)
-app/controllers/admin/users_controller.rb:
-  * <span class="org-rainbow-delimiters-depth-2">[</span> 20<span class="org-rainbow-delimiters-depth-2">]</span> <span class="org-rainbow-delimiters-depth-2">[</span>TODO<span class="org-rainbow-delimiters-depth-2">]</span> any other way to do this?
-  * <span class="org-rainbow-delimiters-depth-2">[</span>132<span class="org-rainbow-delimiters-depth-2">]</span> <span class="org-rainbow-delimiters-depth-2">[</span>FIXME<span class="org-rainbow-delimiters-depth-2">]</span> high priority for next deploy
-app/models/school.rb:
-  * <span class="org-rainbow-delimiters-depth-2">[</span> 13<span class="org-rainbow-delimiters-depth-2">]</span> <span class="org-rainbow-delimiters-depth-2">[</span>OPTIMIZE<span class="org-rainbow-delimiters-depth-2">]</span> refactor this code to make it faster
-  * <span class="org-rainbow-delimiters-depth-2">[</span> 17<span class="org-rainbow-delimiters-depth-2">]</span> <span class="org-rainbow-delimiters-depth-2">[</span>FIXME<span class="org-rainbow-delimiters-depth-2">]</span>
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defvar</span> <span class="org-variable-name">xterm-extra-capabilities</span> nil<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defvar</span> <span class="org-variable-name">xterm-query-timeout</span> nil<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'term-file-aliases
+             '<span class="org-rainbow-delimiters-depth-2">(</span><span class="org-string">"st-256color"</span> . <span class="org-string">"xterm-256color"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
 <p>
-<a href="http://guides.rubyonrails.org/command_line.html#notes">&gt;&gt; Continue reading &lt;&lt;</a>
+Details in /usr/share/emacs/27.1/lisp/term/xterm.el
 </p>
 </div>
 <div id="postamble" class="status">
