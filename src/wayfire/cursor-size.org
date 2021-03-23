@@ -1,0 +1,10 @@
+#+TITLE: Cursor size in wayfire
+#+TIMESTAMP: 2021-03-19
+#+SETUPFILE: ~/org/blog/tpl/main.org
+
+#+BEGIN_SRC bash
+$ gsettings get org.gnome.desktop.interface cursor-theme
+'Vimix-cursors'
+$ gsettings get org.gnome.desktop.interface cursor-size
+36
+#+END_SRC

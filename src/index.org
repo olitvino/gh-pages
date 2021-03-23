@@ -3,6 +3,8 @@
 
 Hi there! I'm going to write something about Ruby, Emacs, Java, Linux, CI/CD, Nginx and other interesting stuff
 
+- [[file:linux/some-interesting-options.org][Some interesting options]]
+- [[file:wayfire/cursor-size.org][Cursor size in Wayfire]]
 - [[file:emacs/st-terminal-256-colors.org][St terminal Emacs 256 colors]]
 - [[file:config.org][This site config]]
 - [[file:linux/nvidia/optimus/libglvnd/2020/03/10/nvidia-libglvnd.org][Nvidia Optimus: libglvnd]]

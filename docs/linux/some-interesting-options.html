@@ -6,7 +6,7 @@
 <!-- 2021-03-23 Tue 23:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Nvidia Optimus: libglvnd</title>
+<title>Some interesting options</title>
 <meta name="generator" content="Org mode" />
 <link rel="stylesheet" href="https://gongzhitaao.org/orgcss/org.css" type="text/css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
@@ -64,71 +64,39 @@ for the JavaScript code in this tag.
 <a href="/about.html">about</a>
 </div>
 <div id="content">
-<h1 class="title">Nvidia Optimus: libglvnd</h1>
+<h1 class="title">Some interesting options</h1>
 
-<div id="outline-container-org28bc6ca" class="outline-2">
-<h2 id="org28bc6ca"><span class="section-number-2">1</span> Configuration</h2>
+<div id="outline-container-org5a2eb6c" class="outline-2">
+<h2 id="org5a2eb6c"><span class="section-number-2">1</span> Hide processes running as other users</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-/etc/X11/xorg.conf.d/30-nvidia.conf:
+The proc filesystem supports the following mount option <code>hidepid</code>
 </p>
+
+<p>
+0   Everybody  may access all <i>proc</i>[pid] directories.  This is the traditional behavior, and the default if this mount option is not specified.
+1   Users may not access files and subdirectories inside any <i>proc</i>[pid]  directories  but  their  own  (the <i>proc</i>[pid]  directories  themselves  remain  visible)
+2   As for mode 1, but in addition the <i>proc</i>[pid] directories belonging to other  users  become  invisible.
+</p>
+
+
 <div class="org-src-container">
-<pre class="src src-sh">Section <span class="org-string">"ServerLayout"</span>
-      Identifier <span class="org-string">"layout"</span>
-      Screen 0 <span class="org-string">"iGPU"</span>
-      Option <span class="org-string">"AllowNVIDIAGPUScreens"</span>
-EndSection
+<pre class="src src-bash">mount -o remount,rw,nosuid,nodev,noexec,relatime,<span class="org-variable-name">hidepid</span>=2 /proc
+</pre>
+</div>
 
-Section <span class="org-string">"Device"</span>
-      Identifier <span class="org-string">"iGPU"</span>
-      Driver <span class="org-string">"modesetting"</span>
-      BusID <span class="org-string">"PCI:0:2:0"</span>
-EndSection
-
-Section <span class="org-string">"Screen"</span>
-      Identifier <span class="org-string">"iGPU"</span>
-      Device <span class="org-string">"iGPU"</span>
-EndSection
-
-Section <span class="org-string">"Device"</span>
-      Identifier <span class="org-string">"nvidia"</span>
-      Driver <span class="org-string">"nvidia"</span>
-      BusID <span class="org-string">"PCI:2:0:0"</span>
-EndSection
+<div class="org-src-container">
+<pre class="src src-/etc/fstab">proc    /proc    proc    defaults,nosuid,nodev,noexec,relatime,hidepid=2     0     0
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orga5f8d33" class="outline-2">
-<h2 id="orga5f8d33"><span class="section-number-2">2</span> Tests</h2>
+<div id="outline-container-org8b4e202" class="outline-2">
+<h2 id="org8b4e202"><span class="section-number-2">2</span> Disable reading kernel message buffer for unprivileged users</h2>
 <div class="outline-text-2" id="text-2">
-<p>
-glxinfo:
-</p>
 <div class="org-src-container">
-<pre class="src src-sh">$ <span class="org-variable-name">__NV_PRIME_RENDER_OFFLOAD_PROVIDER</span>=NVIDIA-G0 <span class="org-sh-escaped-newline">\</span>
-    <span class="org-variable-name">__GLX_VENDOR_LIBRARY_NAME</span>=nvidia <span class="org-sh-escaped-newline">\</span>
-    glxinfo egrep <span class="org-string">'(renderer|vendor) string'</span>
-
-server glx vendor string: NVIDIA Corporation
-client glx vendor string: NVIDIA Corporation
-OpenGL vendor string: NVIDIA Corporation
-OpenGL renderer string: GeForce 940MX/PCIe/SSE2
-</pre>
-</div>
-
-<p>
-glxgears:
-</p>
-<div class="org-src-container">
-<pre class="src src-sh">$ <span class="org-variable-name">__NV_PRIME_RENDER_OFFLOAD_PROVIDER</span>=NVIDIA-G0 <span class="org-sh-escaped-newline">\</span>
-    <span class="org-variable-name">__GLX_VENDOR_LIBRARY_NAME</span>=nvidia <span class="org-variable-name">__GL_SYNC_TO_VBLANK</span>=0 <span class="org-sh-escaped-newline">\</span>
-    glxgears
-
-22971 frames<span class="org-keyword"> in</span> 5.0 seconds = 4594.111 FPS
-22384 frames<span class="org-keyword"> in</span> 5.0 seconds = 4476.774 FPS
-23685 frames<span class="org-keyword"> in</span> 5.0 seconds = 4737.000 FPS
+<pre class="src src-bash">sysctl -w kernel.dmesg_restrict=1
 </pre>
 </div>
 </div>
